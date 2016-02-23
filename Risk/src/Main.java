@@ -1,6 +1,3 @@
-import Import.ReadFile;
-import MapClasses.Territory;
-
 /**
  * Created by Christoph on 22.02.2016.
  */
