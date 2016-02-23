@@ -10,7 +10,18 @@ public class Main {
         ReadFile importer = new ReadFile();
         importer.readFile(filepath);
 
-        System.out.println(Territory.tmap.get("Japan").patches);
+        //System.out.println(Territory.tmap.get("Japan").patches);
+
+
+
+        Actions a = new Actions();
+
+        int[] array = a.fillAndSortArray(3);
+
+        for (int el : array){
+            System.out.print(el);
+        }
+
 
 
     }
