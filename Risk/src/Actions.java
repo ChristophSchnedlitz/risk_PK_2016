@@ -3,104 +3,108 @@
  */
 public class Actions {
 
-    public void claim(Territory toClaim, int ownerID){
-        if(toClaim.getOwner()==-1){
-            toClaim.changeOwner(ownerID);
+    //action in acquisiton phase - click on unclaimed territory, make it yours
+    public static void claim(Territory toClaim, int ownerID){
+        if(toClaim.getOwner()==-1){ //can be omitted because built in listener and Enemy AI
+            toClaim.setOwner(ownerID);
+            toClaim.changeArmy(1);
         } else {}
-
     }
 
-    public void reinforce(Territory ter){
-        if (ter.getOwner()==1){
+    public static void reinforce(Territory ter){
             ter.changeArmy(1);
-        } else {}
-
     }
 
-    //Listener decides if move or attack
 
     //Move troops into own territories | only from 1 territory to another per round (it is possible to send them back in the same round)
-    private void move(Territory first, Territory second){
+    public static void move(Territory first, Territory second){
 
 
     }
 
-    //1 army always left behind | max amount of armies sent to battle (max 3)
-    private void attack(Territory first, Territory second){
 
-        int attackerArmy = first.getArmy();
-        int defenderArmy = second.getArmy();
+    public static void attack(Territory attackerTer, Territory defenderTer){
 
-        if (attackerArmy == 1){
+        int attackerArmy = attackerTer.getArmy();
+        int defenderArmy = defenderTer.getArmy();
 
-        } else {
-            attackerArmy = (attackerArmy - 1) > 3 ? 3 : (attackerArmy - 1);
-            first.changeArmy(-attackerArmy);
-            defenderArmy = defenderArmy > 2 ? 2: defenderArmy;
+        //determine the army numbers according to game mechanics
 
+        int attackerArmyMax = ( (attackerArmy - 1) >= 3) ? 3 : (attackerArmy - 1); //attacker attacks with full amount, max 3, 1 has to stay behind
+        int defenderArmyMax = (defenderArmy >= 2 ) ? 2: defenderArmy; //defender defends with max, max 2 allowed
 
+        attackerTer.changeArmy(-attackerArmyMax); //attacker army leaves its territory
 
+        int[] losses = rollLosses(attackerArmyMax,defenderArmyMax); //losses on each side are calculated
 
-
-
+        if (defenderArmy-losses[1] <= 0){
+                defenderTer.changeArmy(-defenderArmy); //conquered country: first set armies to 0
+                defenderTer.changeOwner(); //change owner of conquered country
+                defenderTer.changeArmy(attackerArmyMax - losses[0]); //set surviving armies of attacker on conquered territory
+        }   else {
+                    defenderTer.changeArmy(-losses[1]); //defender territory loses troops
+                    attackerTer.changeArmy(attackerArmyMax - losses[0]); //attackers troops return (minus the losses)
         }
 
-
-
-
-        //player Army == 1 --> not allowed
-        //all others are sent, max 3
-
-        //defender defends with
-
-
     }
-
 
     //Dice methods for attack
 
-    public int[] diceRoll(int attacker, int defender){
-        int[] ArmiesRemain = new int[2]; //here the remaining armies on each side will be stored. [0] is for attacker, [1] is for defender
-        int[] rollsAttacker = new int[attacker];
-        int[] rollsDefender = new int[defender];
+    private static int[] rollLosses(int attacker, int defender){
 
+        int[] rollsAttacker = fillAndSortArray(attacker);
+        int[] rollsDefender = fillAndSortArray(defender);
 
-
-
-
-
-        return new int[]{0,1};
+        return compareRolls(rollsAttacker,rollsDefender);
     }
 
-    public int[] fillAndSortArray(int length){
+    //creates a sorted array (high to low) with random dice throws (D6 dice)
+    private static int[] fillAndSortArray(int length) {
+
         int[] ar = new int[length];
 
         //fill array with dice rolls
         int i = 0;
-        while (i<length){
-            ar[i] = (int)((Math.random()*6)+1);
+        while (i < ar.length) {
+            ar[i] = (int) ((Math.random() * 6) + 1);
+            i++;
         }
 
-        //sort array from highest to lowest
+        //sort dice rolls in array from highest to lowest
         boolean done;
         do {
-                done = true;
-                for (int j = 1; j < ar.length; j++) {
-                    if (ar[j - 1] < ar[j]) {
-                        int h = ar[j];
-                        ar[j] = ar[j - 1];
-                        ar[j - 1] = h;
-                        done = false;
-                    }
+            done = true;
+            for (int j = 1; j < ar.length; j++) {
+                if (ar[j - 1] < ar[j]) {
+                    int h = ar[j];
+                    ar[j] = ar[j - 1];
+                    ar[j - 1] = h;
+                    done = false;
                 }
-            } while(! done);
+            }
+
+        } while(! done);
 
         return ar;
-
     }
 
+    //compares the results of dice throws of attacker and defender, returns army losses
+    private static int[] compareRolls(int[] attacker, int[] defender){
 
+        int noComparisons = Math.min(attacker.length,defender.length); //We only need to do "noComparison" comparisions
 
+        int[] losses = new int[2]; //number of lost rounds are recorded. losses[0] = attacker, losses[1] = defender
+        int i = 0;
 
+        while (i < noComparisons){
+            if (attacker[i] > defender[i]){ //attacker only wins if he is higher, loses if equal
+                losses[1]+=1;
+            } else{
+                losses[0]+=1;}
+            i++;
+        }
+
+        return losses;
+    }
 
 }

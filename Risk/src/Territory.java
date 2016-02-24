@@ -1,18 +1,27 @@
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.shape.*;
 import java.util.HashMap;
 import java.util.ArrayList;
-
+import javafx.scene.paint.Color;
+import java.util.Arrays;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 public class Territory {
 
     public static HashMap<String, Territory> tmap = new HashMap<>(); //String: Name of Territory | Territory: Data object
 
     private int[] capital = new int[2]; //x and y coordinate of capital capital[0] = x coordinate;
-    private int owner = -1; // -1: no owner, 0: Computer, 1: Player
-    private int army; //integerproperty allows update on worldmap
+    public int owner = -1; // -1: no owner, 0: Computer, 1: Player
+    public IntegerProperty army = new SimpleIntegerProperty();
     private ArrayList<Territory> neighbors = new ArrayList<>();
     public ArrayList<Polygon> patches = new ArrayList<>();
 
+
+    //change changeArmy to update a IntegerProety
+    //create getArmyDisplay
+
+    //A. IMPORT METHODS
 
     //constructor for import
     public Territory(Polygon p){
@@ -40,28 +49,98 @@ public class Territory {
     }
 
 
-    //owner related methods
-    public void changeOwner(int owner){
-        this.owner = owner;
-    }
+
+    //B. GAME PHASE METHODS
+
+    //B.1 Getter & checking methods
 
     public int getOwner(){
         return this.owner;
     }
 
+    public int getArmy(){
+        return this.army.getValue();
+    }
 
-    //army related methods
+    //returns the capital
+    public int[] getCapital(){
+        return this.capital;
+    }
 
-    public void changeArmy(int change){ //all other rules are dealt with in action methods
-        if ( (this.army + change ) < 0){
-            this.army = 0;
+    public ArrayList<Territory> getNeighbors (){
+        return neighbors;
+    }
+
+
+    public boolean isNeighbor (Territory t){
+        for (Territory t1: this.neighbors){
+            if (t1==t) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //B.2 Action methods
+
+    // claim method - Acquisition stage
+    public void setOwner(int owner){
+        this.owner = owner;
+        setColor();
+    }
+
+    //for attack method
+    public void changeOwner(){ //switches owner after successful attack by player or computer
+        if (this.owner == 0){
+            this.owner = 1;
+            setColor();
         } else {
-            this.army += change;
+            this.owner = 0;
+            setColor();
         }
     }
 
-    public int getArmy(){
+    //used in acquisition, reinforce, move and attack
+    public void changeArmy(int change){ //all other rules are dealt with in action methods
+        if ( (this.army.getValue() + change ) < 0){
+            this.army.set(0);
+        } else {
+            this.army.set(this.army.get()+change);
+        }
+    }
+
+
+    // C DISPLAY
+
+    //shows updateds army number
+    public IntegerProperty getArmyDisplay(){
         return this.army;
+    }
+
+
+    //sets the color of the Territory according to the owner
+    public void setColor (){
+        if(owner==-1){
+            for (Polygon p: this.patches){
+                p.setStroke(Color.BLACK);
+                p.setFill(Color.GREY);
+            }
+        }
+
+        if (owner==0){
+            for (Polygon p: this.patches){
+                p.setStroke(Color.BLACK);
+                p.setFill(Color.RED);
+            }
+        }
+
+        if (owner==1){
+            for (Polygon p: this.patches){
+                p.setStroke(Color.BLACK);
+                p.setFill(Color.BLUE);
+            }
+        }
+
     }
 
 
