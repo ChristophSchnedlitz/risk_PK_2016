@@ -1,5 +1,4 @@
 import javafx.application.Application;
-import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -8,17 +7,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+//check if these imports are neccessary!!!
+
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import javafx.beans.property.SimpleIntegerProperty;
-
+import javafx.beans.property.IntegerProperty;
+import javafx.scene.paint.Paint;
 
 
 public class Main extends Application{
@@ -42,14 +44,11 @@ public class Main extends Application{
         Group lines=new Group();
 
         BorderPane layout=new BorderPane();
-        StackPane layout1=new StackPane();
+        StackPane layout1=new StackPane(); //!!!! WHAT IS THE PURPUSE OF THIS??
         Group world= new Group();
-
-
 
         //first loop through the territories
         for (Territory ter : Territory.tmap.values()){
-
 
             //Lines connecting neighbors
             //second loop through the neighbors , draw the lines from one capital to all neighbouring capitals
@@ -165,7 +164,6 @@ public class Main extends Application{
               gameOver.setPadding(new Insets(20));
           }
 
-
        });
 
 
@@ -178,11 +176,9 @@ public class Main extends Application{
         );
         layout.setTop(gameStateDisplay);
 
+        //!!! When Button appears it messes the map (map shifts up slightly)
 
-
-        //!!! When Button appears it messes with the map (map shifts up slightly)
-
-        //End round button for player in move/attack stage
+        //End round button for player in move/attack stage (stage 3)
         Button button=new Button("End my round");
         button.setPrefSize(100,65);
         button.setAlignment(Pos.CENTER_RIGHT);
@@ -203,7 +199,6 @@ public class Main extends Application{
         //sets world group to layout center
         layout.setCenter(world);
 
-
         //sets layout background color (water, oceans)
         layout.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE,new CornerRadii(0),new Insets(0))));
 
@@ -216,7 +211,6 @@ public class Main extends Application{
         scene.setRoot(layout);
         stage.show();
     }
-
 
     //is the territory a territory? Returns null or Territory
     public Territory isTerritory (double x, double y){
@@ -232,13 +226,9 @@ public class Main extends Application{
     }
 
 
-
-
-
     public static void main(String args[]){
         launch(args);
 
     }
-
 
 }

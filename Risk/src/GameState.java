@@ -1,17 +1,13 @@
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
-import java.util.Iterator;
-
 /**
  * Created by Christoph on 23.02.2016.
  */
 public class GameState {
 
-    private static int playerReinforce;
-    private static int computerReinforce;
     private static IntegerProperty state = new SimpleIntegerProperty();
-
+    private static int[] reinforceBonus;
 
 
     public static IntegerProperty getGameState(){
@@ -31,6 +27,7 @@ public class GameState {
         for (String key : Territory.tmap.keySet()){
             if (Territory.tmap.get(key).getOwner() == -1){
                 AcquisitionOngoing = true;
+                reinforceBonus = calculateBonus();
                 break;
             }
         }
@@ -38,17 +35,21 @@ public class GameState {
     }
 
     private static boolean ReinforcementPhase(){
-        int[] bonus = calculateBonus();
-        int computerBonus = bonus[0];
-        int playerBonus = bonus[1];
+
+        int computerBonus = reinforceBonus[0];
+        int playerBonus = reinforceBonus[1];
         int totalBonus = computerBonus+playerBonus;
+
         //decrementBonus
+
 
         return (!AcquisitionPhase() & totalBonus>0);
     }
 
     private static boolean AttackPhase(){
 
+        //end of attackPhase: check if Game over? no
+        // reinforceBonus = calculateBonus();
         return !AcquisitionPhase() && !ReinforcementPhase() && !checkGameOver();
     }
 
@@ -75,17 +76,17 @@ public class GameState {
         return terOwned;
     }
 
-    //returns an array with the reinforcment bonus of the computer [0] and the player [1]
+    //returns an array with the reinforcement bonus of the computer [0] and the player [1]
     private static int[] calculateBonus(){
 
         int[] reinforceBonus = new int[2];
 
-        //Territories
+        //Territory bonus
         int[] terOwned = territoryCount();
         reinforceBonus[0] = terOwned[0]/3;
         reinforceBonus[1] = terOwned[1]/3;
 
-        //Continents
+        //Continent bonus
         for (String name : Continent.cmap.keySet()){
             int[] ContBonus = Continent.cmap.get(name).continentBonus();
             reinforceBonus[ContBonus[0]]+=ContBonus[1];
