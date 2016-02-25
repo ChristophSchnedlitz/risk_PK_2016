@@ -8,6 +8,7 @@ public class EnemyAI {
 
     public static void conquer(){
 
+        GameState.reinforceBonus = GameState.calculateBonus();
     }
 
     public static void reinforcing(){

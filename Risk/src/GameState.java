@@ -7,7 +7,7 @@ GameState controls the phases of the game (acquisition, reinforcement, attack/mo
 public class GameState {
 
     private static IntegerProperty state = new SimpleIntegerProperty();
-    private static int[] reinforceBonus;
+    public static int[] reinforceBonus;
     private static boolean allowMove;
     public static IntegerProperty BonusDisplay = new SimpleIntegerProperty();
 
@@ -74,14 +74,14 @@ public class GameState {
     }
 
     //returns an array with the reinforcement bonus of the computer [0] and the player [1]
-    private static int[] calculateBonus(){
+    public static int[] calculateBonus(){
 
         int[] reinforceBonus = new int[2];
 
         //Territory bonus
         int[] terOwned = territoryCount();
         reinforceBonus[0] = terOwned[0]/3;
-        reinforceBonus[1] = terOwned[1]/3;
+        reinforceBonus[1] = terOwned[1]*3/3;
 
         //Continent bonus
         for (String name : Continent.cmap.keySet()){

@@ -157,7 +157,7 @@ public class Main extends Application{
 
             if (ter1 != null && rightClicked ==null){ //2nd left click is only used to point to territory player wishes to attack (owned by enemyAI)
                 ter2= isTerritory(e.getX(),e.getY());
-                if (ter2.getOwner() != 0){
+                if (ter2.getOwner() != 0 && !ter1.isNeighbor(ter1)){
                     ter2 = null;
                 }
             }
@@ -234,6 +234,7 @@ public class Main extends Application{
         //layout.setBottom(button);
         button.setOnMouseClicked(e -> {
             EnemyAI.conquer();
+            GameState.getGameState();
         });
 
         GameState.getGameState().addListener((v,oldValue,newValue) ->{
