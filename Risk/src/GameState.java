@@ -8,6 +8,7 @@ public class GameState {
 
     private static IntegerProperty state = new SimpleIntegerProperty();
     private static int[] reinforceBonus;
+    private static boolean allowMove;
 
 
     public static IntegerProperty getGameState(){
