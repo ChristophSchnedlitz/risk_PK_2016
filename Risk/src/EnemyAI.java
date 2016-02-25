@@ -6,11 +6,11 @@ import java.util.HashMap;
  */
 public class EnemyAI {
 
-    public static HashMap<Continent, int[]> count = new HashMap<>();
+    private static HashMap<Continent, int[]> count = new HashMap<>();
 
 
     //Analysis method for AI. Creates a hashmap with number of territories owned per side for each continent
-    public static void continentCount(){
+    private static void continentCount(){
 
         for (Continent continent: Continent.cmap.values()){
 
@@ -44,6 +44,7 @@ public class EnemyAI {
 
     }
 
+
     public static void reinforcing(){
 
         int i = 1;
@@ -66,8 +67,38 @@ public class EnemyAI {
 
     public static void conquer(){
 
+        Territory attackFrom = null;
+        Territory toAttack = null;
+
+        for (Territory t : Territory.tmap.values()) {
+            if (t.getOwner() == 0 && t.getArmy() > 1 && playerNeighbor(t)!=null) {
+                toAttack = playerNeighbor(t);
+                attackFrom = t;
+                break;
+            }
+        }
+
+        if(attackFrom != null && toAttack != null){
+            Actions.attack(attackFrom,toAttack);
+        }
+
         //before conquer ends, reinforece Bonus is filled up so GameState can switch to that phase
-        GameState.reinforceBonus = GameState.calculateBonus();
+        GameState.calculateBonus();
+    }
+
+    //helper for conquering
+
+    private static Territory playerNeighbor(Territory ter){
+
+        Territory toAttack = null;
+
+        for (Territory target : ter.getNeighbors()){
+
+            if (target.getOwner() == 1){
+                toAttack = target;
+            }
+        }
+        return toAttack;
     }
 
 

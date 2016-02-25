@@ -7,9 +7,9 @@ import java.util.HashMap;
 public class Continent {
 
     public static HashMap<String, Continent> cmap = new HashMap<>();
-
     private int armyBonus;
     public ArrayList<Territory> territories = new ArrayList<>();
+
 
     public Continent(int armyBonus,ArrayList<Territory> territories){
         this.armyBonus = armyBonus;
@@ -17,11 +17,10 @@ public class Continent {
     }
 
     //returns an array with array[0] being the sole owner of all continent territories and array[1] being the continent bonus
-    //if no sole owner, retunrs array {0,0}
-
+    //if no sole owner, retunrs array {0,0}!
     public int[] continentBonus(){
 
-        int [] continentOwnerBonus = new int[2]; // [0] = Owner, [1] = Bonuspoints
+        int [] continentOwnerBonus = new int[2]; // [0] = Owner, [1] = armyBonus of continent
 
         int ownerCount = 0;
         int terCount = 0;

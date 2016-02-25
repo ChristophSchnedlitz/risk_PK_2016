@@ -1,32 +1,35 @@
 /**
  * Created by Christoph on 23.02.2016.
+ * Actions methods can rely that the parameters given to them are all according to the rules
+ * as much as possible, we tried to handle actions without needing to know ownerID
+ *
  */
 public class Actions {
 
     //action in acquisiton phase - click on unclaimed territory, make it yours
+    //claim relies that Territory is not yet claimed
     public static void claim(Territory toClaim, int ownerID){
-        if(toClaim.getOwner()==-1){ //can be omitted because built in listener and Enemy AI
-            toClaim.setOwner(ownerID);
-            toClaim.changeArmy(1);
-        } else {}
+        toClaim.setOwner(ownerID);
+        toClaim.changeArmy(1);
     }
 
+    //reinforce relies that Territory is owned by owner
     public static void reinforce(Territory ter, int owner){
             ter.changeArmy(1);
-            GameState.decrementBonus(owner); //reinforcment counter
+            GameState.decrementBonus(owner); //reinforcment bonus counter
     }
 
 
     //Move troops into own territories | only from 1 territory to another per round (it is possible to send them back in the same round)
+    //more relies that both territories are owned by same owner and first has >1 army
     public static void move(Territory first, Territory second){
 
-        if (GameState.ter1mov == null && GameState.ter2mov == null) { //
-            GameState.ter1mov = first;
-            GameState.ter2mov = second;
+        if (GameState.getTer1Mov() == null && GameState.getTer2mov() == null) { //
+            GameState.setTerMov(first,second);
             first.changeArmy(-1);
             second.changeArmy(1);
         } else {
-            if ( (first == GameState.ter1mov || first == GameState.ter2mov) && (second == GameState.ter2mov || second == GameState.ter1mov)){
+            if ( (first == GameState.getTer1Mov() || first == GameState.getTer2mov()) && (second == GameState.getTer2mov() || second == GameState.getTer1Mov())){
                 first.changeArmy(-1);
                 second.changeArmy(1);
             } else {
@@ -35,7 +38,10 @@ public class Actions {
         }
     }
 
-
+    //attack assumes: that territory1 is owned by attacker and territory2 is owned by a different owner
+    //1st Step: Max armies (attacker/defender) are calculated
+    //2nd step: Create sorted (ascending) array for attacker & defender (fillandsortArray)
+    //3d step: Compare arrays and return array with losses on each side
     public static void attack(Territory attackerTer, Territory defenderTer){
 
         int attackerArmy = attackerTer.getArmy();

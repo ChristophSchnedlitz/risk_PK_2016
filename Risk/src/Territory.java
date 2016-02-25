@@ -3,20 +3,22 @@ import javafx.scene.shape.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
-import java.util.Arrays;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+
+/** Created by Christoph, 22.06.16
+ * Each territory of importFile is 1 object, all patches/neighbors of territory are put into patches/neighbors ArrayList (Polygons/Territory obj)
+ *
+ */
 
 public class Territory {
 
-    public static HashMap<String, Territory> tmap = new HashMap<>(); //String: Name of Territory | Territory: Data object
+    public final static HashMap<String, Territory> tmap = new HashMap<>(); //String: Name of Territory | Territory: Data object
 
-    private int[] capital = new int[2]; //x and y coordinate of capital capital[0] = x coordinate;
-    public int owner = -1; // -1: no owner, 0: Computer, 1: Player
+    private final int[] capital = new int[2]; //x and y coordinate of capital capital[0] = x coordinate;
     public IntegerProperty army = new SimpleIntegerProperty();
-    private ArrayList<Territory> neighbors = new ArrayList<>();
-    public ArrayList<Polygon> patches = new ArrayList<>();
-
+    private final ArrayList<Territory> neighbors = new ArrayList<>();
+    public final ArrayList<Polygon> patches = new ArrayList<>();
+    public int owner = -1; // -1: no owner, 0: Computer, 1: Player
 
     //change changeArmy to update a IntegerProety
     //create getArmyDisplay

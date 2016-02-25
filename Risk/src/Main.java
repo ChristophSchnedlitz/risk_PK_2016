@@ -15,8 +15,19 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
 
-//check if these imports are neccessary!!!
-
+/**
+ * Created by Nikolla, 22.02.16
+ * Basic guidelines:
+ *
+ * 1. Main creates window/map & mouse listeners (getting values from Territory and GameState, using methods from GameState, Actions of player, EnemyAI)
+ * 2. ReadFile imports txt File to Territory and Continent
+ * 3. GameState knows in which stage the game is, handles reinforcment bonus and movement constraint, and if win/lose conditions are met
+ * 4. Actions is used by PLAYER and EnemyAI to acquire, reinforce, attack/move
+ * 5. EnemyAI is the dumbest AI ever created. It became self aware but is behaving like an obnoxious passive aggressive teenager
+ *
+ * Whenever owners are important, 0 is computer and 1 is player. When arrays show values for both parties, array[0] is always computer and array[1] always player
+ *
+ */
 
 public class Main extends Application {
 
@@ -37,22 +48,12 @@ public class Main extends Application {
         Group lines = new Group();
 
         BorderPane layout = new BorderPane();
-        StackPane layout1 = new StackPane(); //!!!! WHAT IS THE PURPUSE OF THIS??
         Group world = new Group();
 
 
         //first loop through the territories
         for (Territory ter : Territory.tmap.values()) {
-            //Lines connecting neighbors
-            //second loop through the neighbors , draw the lines from one capital to all neighbouring capitals
-          /* for (Territory neighbors: ter.getNeighbors()){
 
-               Line l= new Line(ter.getCapital()[0],ter.getCapital()[1],neighbors.getCapital()[0],neighbors.getCapital()[1]);
-               l.setStroke(Color.ANTIQUEWHITE);
-               l.setStrokeWidth(2);
-               lines.getChildren().add(l);
-           }
-           */
             //Lines connecting neighbors
             //second loop through the neighbors, draws the lines from one capital to all neighbouring capitals
             for (Territory neighbors : ter.getNeighbors()) {
@@ -74,14 +75,7 @@ public class Main extends Application {
 
                         lines.getChildren().addAll(line1, line2);
                     }
-                   /*
-                   else {
-                       Line l1=new Line(ter.getCapital()[0],ter.getCapital()[1],
-                               1250,neighbors.getCapital()[1]);
-                       Line l2=new Line(neighbors.getCapital()[0],neighbors.getCapital()[1],
-                               0,ter.getCapital()[1]);
-                       lines.getChildren().addAll(l1,l2);
-                   }*/
+
                 }
             }
 
@@ -113,7 +107,7 @@ public class Main extends Application {
 
 
         //Music
-        String musicFile = "C:\\Users\\Christoph\\Documents\\soundtrack.mp3";
+        String musicFile = "C:\\Users\\Christoph\\Documents\\sound.mp3";
 
         Media sound = new Media(new File(musicFile).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
@@ -126,16 +120,16 @@ public class Main extends Application {
             Territory previous = last;
             last = current;
 
-            if (current != null) {
-                //Players mouse clicks are interpreted according to the GAME STATE
-                boolean isRight = e.getButton().ordinal() != 1;
-                boolean handled = ProcessInput(current, previous, isRight, world);
+            if (current != null) { //prevent clicks on non-territory
+
+                boolean isRight = e.getButton().ordinal() != 1; //is it a right click?
+                boolean handled = ProcessInput(current, previous, isRight, world); //has it been handled (either a method was called or the clicks were ignored)
 
                 if (handled) {
-                    last = null; // forget last country
+                    last = null; // command handled, reset last, wait for new input
                 }
             } else {
-                last = null; // clear previous selection
+                last = null; // click on non-territory; reset last, wait for new input
             }
 
         });
@@ -150,26 +144,32 @@ public class Main extends Application {
         );
         layout.setTop(gameStateDisplay);
 
-        //!!! When Button appears it messes the map (map shifts up slightly)
+        Label reinforceDisplay = new Label("" + GameState.displayBonusPlayer().get());
+        GameState.getGameState().addListener((v, oldValue, newValue) -> {
+                    gameStateDisplay.setText(GameState.displayBonusPlayer().get() + "");
+                }
+        );
+        layout.setBottom(reinforceDisplay);
 
         //End round button for player in move/attack stage (stage 3)
         Button button = new Button("End my round");
-        button.setPrefSize(100, 65);
-        button.setAlignment(Pos.CENTER_LEFT);
+        button.setAlignment(Pos.CENTER);
         button.setFont(new Font("Calibri", 16));
-        button.setPadding(new Insets(20));
-        //layout.setBottom(button);
+
+
         button.setOnMouseClicked(e -> {
+
             GameState.setTerMovNull();
             EnemyAI.conquer();
             GameState.getGameState();
         });
 
         GameState.getGameState().addListener((v, oldValue, newValue) -> {
-            if (GameState.getGameState().get() == 2) {
+            if (GameState.getGameState().get() == 3) {
                 layout.setBottom(button);
             }
         });
+
 
 
         //sets world group to layout center
@@ -189,7 +189,7 @@ public class Main extends Application {
     }
 
     //is the territory a territory? Returns null or Territory
-    public Territory isTerritory(double x, double y) {
+    private Territory isTerritory(double x, double y) {
         for (Territory ter : Territory.tmap.values()) {
             for (Polygon poly : ter.patches) {
 
@@ -207,12 +207,14 @@ public class Main extends Application {
 
     }
 
-    /** returns true if input was fully processed, false if need to wait for another user input
-     * current is always a territory
-     * previous may be null */
-    public static boolean ProcessInput(Territory current, Territory previous, boolean isRight, Group world) {
+    // returns true if input was fully handled, false if need to wait for another user input
+    // current is always a territory
+    // previous may be null
+    // isRight: to determine if rightClick or leftClick
+    // world: to show game over screen if applicable
+    private static boolean ProcessInput(Territory current, Territory previous, boolean isRight, Group world) {
 
-        if (previous == null && current.getOwner() == 0) {
+        if (previous == null && current.getOwner() == 0) { //first click on enemy territory is always ignored (no method invoked)
             return true; // ignore
         }
 
@@ -237,7 +239,7 @@ public class Main extends Application {
         //move or attack stage
         if (GameState.getGameState().get() == 3) {
             if (previous == null) {
-                return isRight; // need another country
+                return isRight; // need another territory
             } else if (previous.getOwner() != 1 || previous.getArmy() <= 1) {
                 return true; // invalid move, but handled
             } else {
@@ -252,20 +254,34 @@ public class Main extends Application {
             }
         }
 
-        return true; // invalid action, but lets continue
+        return false; // invalid action, but lets continue
     }
 
+    //for game over message
     static void checkGameOver(Group world) {
         // GAME OVER
         if (GameState.getGameState().get() == 4) {
+            String won="";
+            if (GameState.territoryCount()[0]==42){
+                won = "Game Over! You lost!";
+            }
+            else {
+                won="Game Over! You won!";
+            }
 
-            Button gameOver = new Button("GAME OVER");
-            gameOver.setPrefSize(300, 300);
+
+            Button gameOver = new Button(won);
+            gameOver.setPrefSize(300, 150);
             gameOver.setAlignment(Pos.CENTER);
-            gameOver.setFont(new Font("Calibri", 30));
-            gameOver.setPadding(new Insets(20));
+            gameOver.setTranslateX(470);
+            gameOver.setTranslateY(200);
+            gameOver.setFont(new Font("Calibri", 15));
+            gameOver.setStyle("-fx-font: 22 arial; -fx-base: #b6e7c9;");
+            //gameOver.setPadding(new Insets(20));
             world.getChildren().add(gameOver);
+
         }
     }
+
 
 }
