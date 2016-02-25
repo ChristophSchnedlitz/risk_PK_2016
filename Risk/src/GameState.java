@@ -116,12 +116,12 @@ public class GameState {
         }
     }
 
-    public static IntegerProperty displayBonusPlayer(){
+   /* public static IntegerProperty displayBonusPlayer(){
 
         IntegerProperty toDisplay = new SimpleIntegerProperty();
         toDisplay.set(reinforceBonus[1]);
         return toDisplay;
-    }
+    }*/
 
 
     // MOVE Restriciton

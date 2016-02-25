@@ -144,12 +144,12 @@ public class Main extends Application {
         );
         layout.setTop(gameStateDisplay);
 
-        Label reinforceDisplay = new Label("" + GameState.displayBonusPlayer().get());
+        /*Label reinforceDisplay = new Label("" + GameState.displayBonusPlayer().get());
         GameState.getGameState().addListener((v, oldValue, newValue) -> {
                     gameStateDisplay.setText(GameState.displayBonusPlayer().get() + "");
                 }
         );
-        layout.setBottom(reinforceDisplay);
+        layout.setBottom(reinforceDisplay);*/
 
         //End round button for player in move/attack stage (stage 3)
         Button button = new Button("End my round");
@@ -222,6 +222,7 @@ public class Main extends Application {
         if (GameState.getGameState().get() == 1 && current.getOwner() == -1 && !isRight) {
             Actions.claim(current, 1);
             EnemyAI.acquisition();
+            GameState.getGameState();
             return true; // fully handled
         }
 
@@ -232,6 +233,7 @@ public class Main extends Application {
             Actions.reinforce(current, 1);
             if (GameState.getBonus(0) > 0) {
                 EnemyAI.reinforcing();
+                GameState.getGameState();
             }
             return true;
         }
