@@ -9,7 +9,7 @@ public class Continent {
     public static HashMap<String, Continent> cmap = new HashMap<>();
 
     private int armyBonus;
-    private ArrayList<Territory> territories = new ArrayList<>();
+    public ArrayList<Territory> territories = new ArrayList<>();
 
     public Continent(int armyBonus,ArrayList<Territory> territories){
         this.armyBonus = armyBonus;

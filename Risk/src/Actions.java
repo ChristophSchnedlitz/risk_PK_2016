@@ -20,7 +20,19 @@ public class Actions {
     //Move troops into own territories | only from 1 territory to another per round (it is possible to send them back in the same round)
     public static void move(Territory first, Territory second){
 
+        if (GameState.ter1mov == null && GameState.ter2mov == null) { //
+            GameState.ter1mov = first;
+            GameState.ter2mov = second;
+            first.changeArmy(-1);
+            second.changeArmy(1);
+        } else {
+            if ( (first == GameState.ter1mov || first == GameState.ter2mov) && (second == GameState.ter2mov || second == GameState.ter1mov)){
+                first.changeArmy(-1);
+                second.changeArmy(1);
+            } else {
 
+            }
+        }
     }
 
 

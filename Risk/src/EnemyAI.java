@@ -6,9 +6,42 @@ import java.util.HashMap;
  */
 public class EnemyAI {
 
-    public static void conquer(){
+    public static HashMap<Continent, int[]> count = new HashMap<>();
 
-        GameState.reinforceBonus = GameState.calculateBonus();
+
+    //Analysis method for AI. Creates a hashmap with number of territories owned per side for each continent
+    public static void continentCount(){
+
+        for (Continent continent: Continent.cmap.values()){
+
+            int computer = 0;
+            int player = 0;
+
+            //iterates through territories of this continent
+            for (Territory ter: continent.territories){
+
+                if (ter.getOwner() == 0){
+                    computer++;
+                }
+                //if owned by player , +1
+                if (ter.getOwner() == 1){
+                    player++;
+                }
+            }
+            count.put(continent,new int[]{computer,player});
+
+        }
+    }
+
+    public static void acquisition(){
+
+        for (Territory t : Territory.tmap.values()){
+            if (t.getOwner() == -1){
+                Actions.claim(t,0);
+                break;
+            }
+        }
+
     }
 
     public static void reinforcing(){
@@ -23,7 +56,7 @@ public class EnemyAI {
             for (Territory t : Territory.tmap.values()){
                 if (t.getOwner() == 0){
                     Actions.reinforce(t,0);
-                     break;
+                    break;
                 }
             }
             i--;
@@ -31,74 +64,11 @@ public class EnemyAI {
     }
 
 
-    public static HashMap<Continent,int[]> continentCount(){
+    public static void conquer(){
 
-        //the return counter
-        //HashMap<String ,Arrays> count= new HashMap<>();
-        HashMap<Continent, int[]> count = new HashMap<Continent, int[]>();
-
-        //check if player alone on one continent, if yes claim on that continent
-        for (Continent continent: Continent.cmap.values()){
-            //ownings per continent, [0] computer, [1] player
-            int[] ownedOnContinent={0,0};
-            //itterates through territoeries
-            for (String key: Territory.tmap.keySet()){
-                //int i=0;i<continent.getTerr().size();i++
-                //if owned by computer, +1
-                if (Territory.tmap.get(key).getOwner()==0){
-                    ownedOnContinent[0]++;
-                }
-                //if owned by player , +1
-                if (Territory.tmap.get(key).getOwner()==1){
-                    ownedOnContinent[1]++;
-                }
-            }
-            //puts the name of the Continent and an array with ownings to the "count" hashmap
-            //count.put(continent.cmap.values().toString(),ownedOnContinent);
-            count.put(continent,ownedOnContinent);
-        }
-        return count;
+        //before conquer ends, reinforece Bonus is filled up so GameState can switch to that phase
+        GameState.reinforceBonus = GameState.calculateBonus();
     }
-
-
-    public static void acquisition(){
-        /*HashMap<Continent ,int[]> count= continentCount();
-
-        for (Continent conti : count.keySet()){
-
-            int[] values=count.get(conti);
-            if (values[0]==0&& values[1]==1){
-                loopContClaim();
-                //   for (Continent cont: )
-
-            }
-        }*/
-
-        for (Territory t : Territory.tmap.values()){
-            if (t.getOwner() == -1){
-                Actions.claim(t,0);
-                break;
-            }
-        }
-
-    }
-
-
-    public static void loopContClaim(){
-
-        for (Continent continent: Continent.cmap.values()){
-
-            //itterates through territoeries
-            for (String key: Territory.tmap.keySet()){
-
-                if (Territory.tmap.get(key).getOwner()!=1){
-                    Actions.claim(Territory.tmap.get(key),0);
-                }
-            }
-        }
-
-    }
-
 
 
 }

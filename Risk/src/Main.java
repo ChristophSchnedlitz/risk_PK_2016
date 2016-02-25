@@ -16,22 +16,13 @@ import javafx.scene.media.MediaPlayer;
 import java.io.File;
 
 //check if these imports are neccessary!!!
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.scene.paint.Paint;
 
 
-public class Main extends Application{
+public class Main extends Application {
 
-    private Territory rightClicked;
-    private Territory ter1;
-    private Territory ter2;
+    private Territory last = null;
 
-    public void start(Stage stage){
+    public void start(Stage stage) {
 
         String filepath = "C:\\Users\\Christoph\\Documents\\world.map";
 
@@ -41,17 +32,17 @@ public class Main extends Application{
 
 
         //groups : countries, capitals , lines
-        Group countries=new Group();
-        Group capitals=new Group();
-        Group lines=new Group();
+        Group countries = new Group();
+        Group capitals = new Group();
+        Group lines = new Group();
 
-        BorderPane layout=new BorderPane();
-        StackPane layout1=new StackPane(); //!!!! WHAT IS THE PURPUSE OF THIS??
-        Group world= new Group();
+        BorderPane layout = new BorderPane();
+        StackPane layout1 = new StackPane(); //!!!! WHAT IS THE PURPUSE OF THIS??
+        Group world = new Group();
 
 
         //first loop through the territories
-        for (Territory ter : Territory.tmap.values()){
+        for (Territory ter : Territory.tmap.values()) {
             //Lines connecting neighbors
             //second loop through the neighbors , draw the lines from one capital to all neighbouring capitals
           /* for (Territory neighbors: ter.getNeighbors()){
@@ -64,25 +55,24 @@ public class Main extends Application{
            */
             //Lines connecting neighbors
             //second loop through the neighbors, draws the lines from one capital to all neighbouring capitals
-            for(Territory neighbors: ter.getNeighbors()){
-                int x=ter.getCapital()[0]-neighbors.getCapital()[0];
-                int y=ter.getCapital()[1]-neighbors.getCapital()[1];
-                double distance= Math.sqrt(x*x+y*y);
-                if (distance<1250*0.5){
-                    Line l=new Line(ter.getCapital()[0],ter.getCapital()[1],
-                            neighbors.getCapital()[0],neighbors.getCapital()[1]);
+            for (Territory neighbors : ter.getNeighbors()) {
+                int x = ter.getCapital()[0] - neighbors.getCapital()[0];
+                int y = ter.getCapital()[1] - neighbors.getCapital()[1];
+                double distance = Math.sqrt(x * x + y * y);
+                if (distance < 1250 * 0.5) {
+                    Line l = new Line(ter.getCapital()[0], ter.getCapital()[1],
+                            neighbors.getCapital()[0], neighbors.getCapital()[1]);
 
                     lines.getChildren().add(l);
-                }
-                else {
-                    if (ter.getCapital()[0]<1250*0.5){
-                        Line line1=new Line(ter.getCapital()[0],ter.getCapital()[1],
-                                0,neighbors.getCapital()[1]);//neighbors.getCapital()[1]/2
+                } else {
+                    if (ter.getCapital()[0] < 1250 * 0.5) {
+                        Line line1 = new Line(ter.getCapital()[0], ter.getCapital()[1],
+                                0, neighbors.getCapital()[1]);//neighbors.getCapital()[1]/2
 
-                        Line line2=new Line(neighbors.getCapital()[0],neighbors.getCapital()[1],
-                                1250,ter.getCapital()[1]); //ter.getCapital()[1]/2
+                        Line line2 = new Line(neighbors.getCapital()[0], neighbors.getCapital()[1],
+                                1250, ter.getCapital()[1]); //ter.getCapital()[1]/2
 
-                        lines.getChildren().addAll(line1,line2);
+                        lines.getChildren().addAll(line1, line2);
                     }
                    /*
                    else {
@@ -98,13 +88,13 @@ public class Main extends Application{
             //Armies displayed
             //get number of armies on territory, convert to string
             //set layout , coordinates for capital city (minus 5p for X, minus 10p for Y to optimize look)
-            Label armyDisplay=new Label(ter.getArmy()+"");
-            ter.getArmyDisplay().addListener((v,oldValue, newValue) -> { //Listener updates army number if it changes
-                        armyDisplay.setText(ter.getArmy() +"");
+            Label armyDisplay = new Label(ter.getArmy() + "");
+            ter.getArmyDisplay().addListener((v, oldValue, newValue) -> { //Listener updates army number if it changes
+                        armyDisplay.setText(ter.getArmy() + "");
                     }
             );
-            armyDisplay.setLayoutX(ter.getCapital()[0]-5);
-            armyDisplay.setLayoutY(ter.getCapital()[1]-10);
+            armyDisplay.setLayoutX(ter.getCapital()[0] - 5);
+            armyDisplay.setLayoutY(ter.getCapital()[1] - 10);
 
             //add capital to label
             capitals.getChildren().add(armyDisplay);
@@ -113,13 +103,13 @@ public class Main extends Application{
             //Draw Territories
             ter.setColor();
             //adds all polygons to the countries group
-            for (Polygon poly: ter.patches){
+            for (Polygon poly : ter.patches) {
                 countries.getChildren().add(poly);
             }
         }
 
         //adds countries, capitals and lines to the world Group
-        world.getChildren().addAll(lines,countries,capitals);
+        world.getChildren().addAll(lines, countries, capitals);
 
 
         //Music
@@ -130,94 +120,31 @@ public class Main extends Application{
         mediaPlayer.play();
 
 
+        world.setOnMouseClicked(e -> {
 
-        //RIGHT MOUSE BUTTON - used for move action
-        world.setOnMousePressed(e -> {
+            Territory current = isTerritory(e.getX(), e.getY());
+            Territory previous = last;
+            last = current;
 
-            if (e.isSecondaryButtonDown()){
-                rightClicked=isTerritory(e.getX(),e.getY());
-                if (rightClicked.getOwner() != 1){ //right click is only to move troops to own field, so if owner is not player, drop it
-                    rightClicked = null;
+            if (current != null) {
+                //Players mouse clicks are interpreted according to the GAME STATE
+                boolean isRight = e.getButton().ordinal() != 1;
+                boolean handled = ProcessInput(current, previous, isRight, world);
+
+                if (handled) {
+                    last = null; // forget last country
                 }
+            } else {
+                last = null; // clear previous selection
             }
+
         });
-
-      //LEFT MOUSE CLICK - 1st click (ter1), second click (ter2)
-
-      world.setOnMouseClicked(e -> {
-            if (rightClicked==null&& ter1==null){
-                ter1=isTerritory(e.getX(),e.getY());
-                if (GameState.getGameState().get()==1 && ter1.getOwner() !=-1){ //in Acquisition phase, only accept clicks on non occupied territories
-                    ter1 = null;
-                } else
-                    if (ter1.getOwner() == 0) { //in all other phases, the first click of player can ONLY be on one of his own territories, otherwise ignore
-                    ter1 = null;
-                }
-            }
-
-            if (ter1 != null && rightClicked ==null){ //2nd left click is only used to point to territory player wishes to attack (owned by enemyAI)
-                ter2= isTerritory(e.getX(),e.getY());
-                if (ter2.getOwner() != 0 && !ter1.isNeighbor(ter1)){
-                    ter2 = null;
-                }
-            }
-
-
-          //Players mouse clicks are interpreted according to the GAME STATE
-
-          //ACQUISITION PHASE
-            if (GameState.getGameState().get()==1 && ter1 !=null && ter1.getOwner()== -1){
-                Actions.claim(ter1, 1);
-                EnemyAI.acquisition();
-                ter1=null;
-                GameState.getGameState();
-            }
-
-          // CONQUER PHASE
-
-          //reinforcement stage
-            if (GameState.getGameState().get()==2 && ter1 !=null && ter1.getOwner()==1){
-                Actions.reinforce(ter1, 1);
-                if (GameState.getBonus(0)>0){
-                    EnemyAI.reinforcing();
-                }
-                ter1 = null;
-          }
-
-
-          //move or attack stage
-          if (GameState.getGameState().get()==3 && ter1 !=null && ter1.getOwner()==1 && ter1.getArmy()>1){
-              if (rightClicked !=null&& rightClicked.getOwner()==1 && rightClicked.isNeighbor(ter1)){ //move
-                  Actions.move(ter1, rightClicked);
-                  ter1=null;
-                  rightClicked=null;
-                  ter2=null;
-              }
-              else if (ter2!=null && ter2.getOwner()==0&& ter2.isNeighbor(ter1)){ //attack
-                  Actions.attack(ter1, ter2);
-                  ter1=null;
-                  ter2=null;
-                  rightClicked=null;
-              }
-          }
-
-          // GAME OVER
-          if (GameState.getGameState().get()==4){
-
-              Button gameOver=new Button("GAME OVER");
-              gameOver.setPrefSize(300,300);
-              gameOver.setAlignment(Pos.CENTER);
-              gameOver.setFont(new Font("Calibri",30));
-              gameOver.setPadding(new Insets(20));
-          }
-
-       });
 
 
         //!!!! PHASE DISPLAY - here it should say Acquisition, Reinforce, attack etc in a NICE DESIGN
 
         Label gameStateDisplay = new Label("" + GameState.getGameState().get());
-        GameState.getGameState().addListener((v,oldValue, newValue) -> {
+        GameState.getGameState().addListener((v, oldValue, newValue) -> {
                     gameStateDisplay.setText(GameState.getGameState().get() + "");
                 }
         );
@@ -226,19 +153,20 @@ public class Main extends Application{
         //!!! When Button appears it messes the map (map shifts up slightly)
 
         //End round button for player in move/attack stage (stage 3)
-        Button button=new Button("End my round");
-        button.setPrefSize(100,65);
+        Button button = new Button("End my round");
+        button.setPrefSize(100, 65);
         button.setAlignment(Pos.CENTER_LEFT);
-        button.setFont(new Font("Calibri",16));
+        button.setFont(new Font("Calibri", 16));
         button.setPadding(new Insets(20));
         //layout.setBottom(button);
         button.setOnMouseClicked(e -> {
+            GameState.setTerMovNull();
             EnemyAI.conquer();
             GameState.getGameState();
         });
 
-        GameState.getGameState().addListener((v,oldValue,newValue) ->{
-            if (GameState.getGameState().get()==2){
+        GameState.getGameState().addListener((v, oldValue, newValue) -> {
+            if (GameState.getGameState().get() == 2) {
                 layout.setBottom(button);
             }
         });
@@ -248,10 +176,10 @@ public class Main extends Application{
         layout.setCenter(world);
 
         //sets layout background color (water, oceans)
-        layout.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE,new CornerRadii(0),new Insets(0))));
+        layout.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE, new CornerRadii(0), new Insets(0))));
 
         //scene size, title, stage
-        Scene scene= new Scene(layout, 1250,650);
+        Scene scene = new Scene(layout, 1250, 650);
         stage.setScene(scene);
         stage.setTitle("All Those Territories");
 
@@ -261,11 +189,11 @@ public class Main extends Application{
     }
 
     //is the territory a territory? Returns null or Territory
-    public Territory isTerritory (double x, double y){
-        for (Territory ter : Territory.tmap.values()){
-            for (Polygon poly: ter.patches){
+    public Territory isTerritory(double x, double y) {
+        for (Territory ter : Territory.tmap.values()) {
+            for (Polygon poly : ter.patches) {
 
-                if (poly.contains(x,y)){
+                if (poly.contains(x, y)) {
                     return ter;
                 }
             }
@@ -274,9 +202,70 @@ public class Main extends Application{
     }
 
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         launch(args);
 
+    }
+
+    /** returns true if input was fully processed, false if need to wait for another user input
+     * current is always a territory
+     * previous may be null */
+    public static boolean ProcessInput(Territory current, Territory previous, boolean isRight, Group world) {
+
+        if (previous == null && current.getOwner() == 0) {
+            return true; // ignore
+        }
+
+        //ACQUISITION PHASE
+        if (GameState.getGameState().get() == 1 && current.getOwner() == -1 && !isRight) {
+            Actions.claim(current, 1);
+            EnemyAI.acquisition();
+            return true; // fully handled
+        }
+
+        // CONQUER PHASE
+
+        //reinforcement stage
+        if (GameState.getGameState().get() == 2 && current.getOwner() == 1 && !isRight) {
+            Actions.reinforce(current, 1);
+            if (GameState.getBonus(0) > 0) {
+                EnemyAI.reinforcing();
+            }
+            return true;
+        }
+
+        //move or attack stage
+        if (GameState.getGameState().get() == 3) {
+            if (previous == null) {
+                return isRight; // need another country
+            } else if (previous.getOwner() != 1 || previous.getArmy() <= 1) {
+                return true; // invalid move, but handled
+            } else {
+
+                if (isRight && current.getOwner() == 1 && current.isNeighbor(previous)) { //move
+                    Actions.move(previous, current);
+                } else if (!isRight && current.getOwner() == 0 && current.isNeighbor(previous)) { //attack
+                    Actions.attack(previous, current);
+                }
+                checkGameOver(world);
+                return true; // handles valid and other invalid cases by forcing user to start selecting countries
+            }
+        }
+
+        return true; // invalid action, but lets continue
+    }
+
+    static void checkGameOver(Group world) {
+        // GAME OVER
+        if (GameState.getGameState().get() == 4) {
+
+            Button gameOver = new Button("GAME OVER");
+            gameOver.setPrefSize(300, 300);
+            gameOver.setAlignment(Pos.CENTER);
+            gameOver.setFont(new Font("Calibri", 30));
+            gameOver.setPadding(new Insets(20));
+            world.getChildren().add(gameOver);
+        }
     }
 
 }

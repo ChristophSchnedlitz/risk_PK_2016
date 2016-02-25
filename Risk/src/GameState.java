@@ -8,11 +8,13 @@ public class GameState {
 
     private static IntegerProperty state = new SimpleIntegerProperty();
     public static int[] reinforceBonus;
-    private static boolean allowMove;
     public static IntegerProperty BonusDisplay = new SimpleIntegerProperty();
+    public static Territory ter1mov;
+    public static Territory ter2mov;
 
 
-
+    //change: each method void and changes state when called
+    // each phase gets a !checkWin!
     public static IntegerProperty getGameState(){
 
         if (AcquisitionPhase()) {state.set(1);}
@@ -39,6 +41,10 @@ public class GameState {
 
     private static boolean ReinforcementPhase(){
 
+        if ((!AcquisitionPhase() & (reinforceBonus[0]+reinforceBonus[1]) > 0)){ //reset the territorires remembered for limiting the move
+            setTerMovNull();
+        }
+
         return (!AcquisitionPhase() & (reinforceBonus[0]+reinforceBonus[1]) > 0);
     }
 
@@ -58,6 +64,7 @@ public class GameState {
 
     //returns an array with the number of territories owned by computer [0] and player [1]
     //for win/loss condition, possibly also for display of info on GUI
+
     public static int[] territoryCount(){
 
         int[] terOwned = new int[2]; //terOwned[0] = Computer, terOwned[1] = Player
@@ -81,7 +88,7 @@ public class GameState {
         //Territory bonus
         int[] terOwned = territoryCount();
         reinforceBonus[0] = terOwned[0]/3;
-        reinforceBonus[1] = terOwned[1]*3/3;
+        reinforceBonus[1] = terOwned[1]*5/3;
 
         //Continent bonus
         for (String name : Continent.cmap.keySet()){
@@ -103,6 +110,11 @@ public class GameState {
         reinforceBonus[owner] -= 1;
         }
 
+    }
+
+    public static void setTerMovNull(){
+        ter1mov = null;
+        ter2mov = null;
     }
 
 
