@@ -11,9 +11,11 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
 
 //check if these imports are neccessary!!!
-
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,17 +49,50 @@ public class Main extends Application{
         StackPane layout1=new StackPane(); //!!!! WHAT IS THE PURPUSE OF THIS??
         Group world= new Group();
 
+
         //first loop through the territories
         for (Territory ter : Territory.tmap.values()){
-
             //Lines connecting neighbors
             //second loop through the neighbors , draw the lines from one capital to all neighbouring capitals
-            for (Territory neighbors: ter.getNeighbors()){ //solve Alaska - Kamchatka problem!
+          /* for (Territory neighbors: ter.getNeighbors()){
 
-                Line l= new Line(ter.getCapital()[0],ter.getCapital()[1],neighbors.getCapital()[0],neighbors.getCapital()[1]);
-                l.setStroke(Color.ANTIQUEWHITE);
-                l.setStrokeWidth(2);
-                lines.getChildren().add(l);
+               Line l= new Line(ter.getCapital()[0],ter.getCapital()[1],neighbors.getCapital()[0],neighbors.getCapital()[1]);
+               l.setStroke(Color.ANTIQUEWHITE);
+               l.setStrokeWidth(2);
+               lines.getChildren().add(l);
+           }
+           */
+            //Lines connecting neighbors
+            //second loop through the neighbors, draws the lines from one capital to all neighbouring capitals
+            for(Territory neighbors: ter.getNeighbors()){
+                int x=ter.getCapital()[0]-neighbors.getCapital()[0];
+                int y=ter.getCapital()[1]-neighbors.getCapital()[1];
+                double distance= Math.sqrt(x*x+y*y);
+                if (distance<1250*0.5){
+                    Line l=new Line(ter.getCapital()[0],ter.getCapital()[1],
+                            neighbors.getCapital()[0],neighbors.getCapital()[1]);
+
+                    lines.getChildren().add(l);
+                }
+                else {
+                    if (ter.getCapital()[0]<1250*0.5){
+                        Line line1=new Line(ter.getCapital()[0],ter.getCapital()[1],
+                                0,neighbors.getCapital()[1]);//neighbors.getCapital()[1]/2
+
+                        Line line2=new Line(neighbors.getCapital()[0],neighbors.getCapital()[1],
+                                1250,ter.getCapital()[1]); //ter.getCapital()[1]/2
+
+                        lines.getChildren().addAll(line1,line2);
+                    }
+                   /*
+                   else {
+                       Line l1=new Line(ter.getCapital()[0],ter.getCapital()[1],
+                               1250,neighbors.getCapital()[1]);
+                       Line l2=new Line(neighbors.getCapital()[0],neighbors.getCapital()[1],
+                               0,ter.getCapital()[1]);
+                       lines.getChildren().addAll(l1,l2);
+                   }*/
+                }
             }
 
             //Armies displayed
@@ -85,6 +120,15 @@ public class Main extends Application{
 
         //adds countries, capitals and lines to the world Group
         world.getChildren().addAll(lines,countries,capitals);
+
+
+        //Music
+        String musicFile = "C:\\Users\\Christoph\\Documents\\soundtrack.mp3";
+
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+
 
 
         //RIGHT MOUSE BUTTON - used for move action
@@ -133,8 +177,11 @@ public class Main extends Application{
 
           //reinforcement stage
             if (GameState.getGameState().get()==2 && ter1 !=null && ter1.getOwner()==1){
-                Actions.reinforce(ter1);
-                ter1=null;
+                Actions.reinforce(ter1, 1);
+                if (GameState.getBonus(0)>0){
+                    EnemyAI.reinforcing();
+                }
+                ter1 = null;
           }
 
 
@@ -158,7 +205,7 @@ public class Main extends Application{
           if (GameState.getGameState().get()==4){
 
               Button gameOver=new Button("GAME OVER");
-              gameOver.setPrefSize(200,200);
+              gameOver.setPrefSize(300,300);
               gameOver.setAlignment(Pos.CENTER);
               gameOver.setFont(new Font("Calibri",30));
               gameOver.setPadding(new Insets(20));
@@ -181,7 +228,7 @@ public class Main extends Application{
         //End round button for player in move/attack stage (stage 3)
         Button button=new Button("End my round");
         button.setPrefSize(100,65);
-        button.setAlignment(Pos.CENTER_RIGHT);
+        button.setAlignment(Pos.CENTER_LEFT);
         button.setFont(new Font("Calibri",16));
         button.setPadding(new Insets(20));
         //layout.setBottom(button);
@@ -190,7 +237,7 @@ public class Main extends Application{
         });
 
         GameState.getGameState().addListener((v,oldValue,newValue) ->{
-            if (GameState.getGameState().get()==3){
+            if (GameState.getGameState().get()==2){
                 layout.setBottom(button);
             }
         });

@@ -2,13 +2,15 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 /**
- * Created by Christoph on 23.02.2016.
+GameState controls the phases of the game (acquisition, reinforcement, attack/move) and checks the win/lose conditions
  */
 public class GameState {
 
     private static IntegerProperty state = new SimpleIntegerProperty();
     private static int[] reinforceBonus;
     private static boolean allowMove;
+    public static IntegerProperty BonusDisplay = new SimpleIntegerProperty();
+
 
 
     public static IntegerProperty getGameState(){
@@ -37,14 +39,7 @@ public class GameState {
 
     private static boolean ReinforcementPhase(){
 
-        int computerBonus = reinforceBonus[0];
-        int playerBonus = reinforceBonus[1];
-        int totalBonus = computerBonus+playerBonus;
-
-        //decrementBonus
-
-
-        return (!AcquisitionPhase() & totalBonus>0);
+        return (!AcquisitionPhase() & (reinforceBonus[0]+reinforceBonus[1]) > 0);
     }
 
     private static boolean AttackPhase(){
@@ -62,6 +57,7 @@ public class GameState {
     }
 
     //returns an array with the number of territories owned by computer [0] and player [1]
+    //for win/loss condition, possibly also for display of info on GUI
     public static int[] territoryCount(){
 
         int[] terOwned = new int[2]; //terOwned[0] = Computer, terOwned[1] = Player
@@ -94,6 +90,19 @@ public class GameState {
         }
 
         return reinforceBonus;
+    }
+
+    public static int getBonus(int owner){
+        return reinforceBonus[owner];
+    }
+
+    public static void decrementBonus(int owner){
+
+        if (reinforceBonus[owner] -1 < 0)
+        {} else {
+        reinforceBonus[owner] -= 1;
+        }
+
     }
 
 

@@ -35,7 +35,7 @@ public class ReadFile {
                 assignLine(line); //each line is treated differently according to its assignment
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(); //prints stack trace of the exception to system.err
         } finally {
             if (in != null)
                 try {

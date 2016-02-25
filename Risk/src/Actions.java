@@ -11,8 +11,9 @@ public class Actions {
         } else {}
     }
 
-    public static void reinforce(Territory ter){
+    public static void reinforce(Territory ter, int owner){
             ter.changeArmy(1);
+            GameState.decrementBonus(owner); //reinforcment counter
     }
 
 

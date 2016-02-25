@@ -10,6 +10,25 @@ public class EnemyAI {
 
     }
 
+    public static void reinforcing(){
+
+        int i = 1;
+        if (GameState.getBonus(0)>0 && GameState.getBonus(1)==0){ //if computer has reinforcments left but player hasn't, it will repeat reinforcing until it has ran out of them
+            i = GameState.getBonus(0);
+        }
+
+        while (i>0){
+
+            for (Territory t : Territory.tmap.values()){
+                if (t.getOwner() == 0){
+                    Actions.reinforce(t,0);
+                     break;
+                }
+            }
+            i--;
+        }
+    }
+
 
     public static HashMap<Continent,int[]> continentCount(){
 
