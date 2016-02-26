@@ -155,16 +155,17 @@ public class EnemyAI {
 
         //IV. else choose random territory
         //but preferably not from Asia
-        if (methodRun) {
+        ///purpose of this method is to look first for something that is NOT in asia. But it seems to do the opposite
+        /*if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
-                if (ter.getOwner() == -1 && !Continent.getContinentName(ter).equals("Asia")) {
+                if (ter.getOwner() == -1 && Continent.getContinentName(ter).equals("Asia")) {
                     Actions.claim(ter, 0);
                     methodRun = false;
                     continentCount();
                     break;
                 }
             }
-        }
+        }*/
 
         if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {

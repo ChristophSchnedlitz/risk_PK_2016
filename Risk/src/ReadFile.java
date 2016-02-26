@@ -94,7 +94,9 @@ public class ReadFile {
         }
     }
 
-    // if line is a neighbor list - the neigbor list is tricky. if a territory has been mentioned already as a neighbor of another territory, that territory's neigbor list will not list the other territory as its neighbor!
+    // if line is a neighbor list
+    // the neighbor list is tricky. if a territory has been mentioned already as a neighbor of another territory,
+    // that territory's neighbor list will not list the other territory as its neighbor!
     private void addNeighbors(String s) {
         String[] data = s.split(" : ", 2); //separate territory name from neigbor countries
         String territoryName = data[0];
