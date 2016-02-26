@@ -55,26 +55,26 @@ public class EnemyAI {
         //I. look if player is alone on a continent, claim an unoccupied territory from there
         for (Continent cont : contAnalysis.keySet()){
             int[] checkPossession = contAnalysis.get(cont);
-            if(checkPossession[0]==0 && checkPossession[1]!=0 && getEmptyTer(cont)!=null){
+            if( checkPossession[0]==0 && checkPossession[1]!=0 && getEmptyTer(cont)!=null){
                 Actions.claim(getEmptyTer(cont),0);
                 methodRun = false;
-                //continentCount();
+                continentCount();
                 break;
             }
         }
 
         //II. strengthen a continent where computer has more armies than player - start with smaller continents
-        //if (methodRun){
+        if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
                 if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus < 3){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    //continentCount();
+                    continentCount();
                     break;
                 }
             }
-       // }
+        }
 
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
@@ -117,7 +117,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]==0 && checkPossession[1]==0) || (cont.armyBonus < 3) ){
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 3) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
