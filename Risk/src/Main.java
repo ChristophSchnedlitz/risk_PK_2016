@@ -111,7 +111,7 @@ public class Main extends Application {
 
 
         //Music
-        String musicFile = "C:\\Users\\Christoph\\Documents\\sound.mp3";
+        String musicFile = "C:\\Users\\Christoph\\Documents\\soundtrack.mp3";
 
         Media sound = new Media(new File(musicFile).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);

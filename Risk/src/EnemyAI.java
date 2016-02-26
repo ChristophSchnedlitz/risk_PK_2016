@@ -64,7 +64,7 @@ public class EnemyAI {
         }
 
         //II. strengthen a continent where computer has more armies than player - start with smaller continents
-        if (methodRun){
+        //if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
                 if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus < 3){
@@ -74,7 +74,7 @@ public class EnemyAI {
                     break;
                 }
             }
-        }
+       // }
 
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
@@ -143,7 +143,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 7) ){
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 6) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
