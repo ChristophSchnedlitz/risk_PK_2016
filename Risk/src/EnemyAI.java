@@ -117,7 +117,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 3) ){
+                if( (checkPossession[0]==0 && checkPossession[1]==0) || (cont.armyBonus < 3) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
