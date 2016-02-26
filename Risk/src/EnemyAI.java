@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class EnemyAI {
 
-    private static HashMap<Continent, int[]> contAnalysis = new HashMap<>();
+    public static HashMap<Continent, int[]> contAnalysis = new HashMap<>();
 
     //Analysis method for AI. Fills a hashmap with number of territories owned per side for each continent
 
@@ -48,9 +48,12 @@ public class EnemyAI {
             if(checkPossession[0]==0 && checkPossession[1]!=0 && getEmptyTer(cont)!=null){
                 Actions.claim(getEmptyTer(cont),0);
                 methodRun = false;
+                continentCount();
                 break;
             }
         }
+
+
 
         // strengthen a continent where computer has more armies than player
         if (methodRun){
@@ -59,6 +62,7 @@ public class EnemyAI {
                 if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
+                    continentCount();
                     break;
                 }
             }
@@ -71,11 +75,11 @@ public class EnemyAI {
                 if( (checkPossession[0]*3) <= checkPossession[1] && getEmptyTer(cont)!=null){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
+                    continentCount();
                     break;
                 }
             }
         }
-
 
 
         //III. if I. & II. not the case, look for a continent that is empty and claim a territory,
@@ -84,35 +88,10 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0]==0 && checkPossession[1]==0 && (cont.armyBonus < 6 && getEmptyTer(cont)!=null)){
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus > 5) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    break;
-                }
-            }
-
-        }
-
-
-        if (methodRun){
-            for (Continent cont : contAnalysis.keySet()){
-                int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0]==0 && checkPossession[1]==0 && (cont.armyBonus < 4 && getEmptyTer(cont)!=null)){
-                    Actions.claim(getEmptyTer(cont),0);
-                    methodRun = false;
-                    break;
-                }
-            }
-
-        }
-
-
-        if (methodRun){
-            for (Continent cont : contAnalysis.keySet()){
-                int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0]==0 && checkPossession[1]==0 && (cont.armyBonus < 3 && getEmptyTer(cont)!=null) ){
-                    Actions.claim(getEmptyTer(cont),0);
-                    methodRun = false;
+                    continentCount();
                     break;
                 }
             }
@@ -126,6 +105,7 @@ public class EnemyAI {
             for (Territory ter : Territory.tmap.values()) {
                 if (ter.getOwner() == -1) {
                     Actions.claim(ter, 0);
+                    continentCount();
                     break;
                 }
             }
