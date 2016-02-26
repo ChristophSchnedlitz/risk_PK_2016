@@ -58,7 +58,7 @@ public class EnemyAI {
             if(checkPossession[0]==0 && checkPossession[1]!=0 && getEmptyTer(cont)!=null){
                 Actions.claim(getEmptyTer(cont),0);
                 methodRun = false;
-                continentCount();
+                //continentCount();
                 break;
             }
         }
@@ -67,10 +67,10 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<3){
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus==2){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    continentCount();
+                    //continentCount();
                     break;
                 }
             }
@@ -82,7 +82,7 @@ public class EnemyAI {
                 if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<=5){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    continentCount();
+                    //continentCount();
                     break;
                 }
             }
@@ -94,7 +94,7 @@ public class EnemyAI {
                 if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<9){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    continentCount();
+                    //continentCount();
                     break;
                 }
             }
@@ -107,7 +107,7 @@ public class EnemyAI {
                 if( (checkPossession[0]*2) <= checkPossession[1] && getEmptyTer(cont)!=null){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    continentCount();
+                    //continentCount();
                     break;
                 }
             }
@@ -120,7 +120,7 @@ public class EnemyAI {
                 if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 3) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    continentCount();
+                    //continentCount();
                     break;
                 }
             }
@@ -133,19 +133,20 @@ public class EnemyAI {
                 if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 4) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    continentCount();
+                    //continentCount();
                     break;
                 }
             }
 
         }
+
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
                 if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 6) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
-                    continentCount();
+                    //continentCount();
                     break;
                 }
             }
@@ -154,15 +155,10 @@ public class EnemyAI {
 
 
 
-
-
-
-
-
         //IV. else choose random territory
         //but preferably not from Asia
         ///purpose of this method is to look first for something that is NOT in asia. But it seems to do the opposite
-        if (methodRun) {
+        /*if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
                 if (ter.getOwner() == -1 && Continent.getContinentName(ter).equals("Asia")) {
                     Actions.claim(ter, 0);
@@ -171,7 +167,7 @@ public class EnemyAI {
                     break;
                 }
             }
-        }
+        }*/
 
         if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
