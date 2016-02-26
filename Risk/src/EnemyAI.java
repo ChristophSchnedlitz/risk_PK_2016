@@ -1,11 +1,6 @@
 import java.util.HashMap;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
+
 
 /**
  * Created by Christoph on 23.02.2016.
@@ -13,7 +8,8 @@ import java.util.Map;
  */
 public class EnemyAI {
 
-    public static HashMap<Continent, int[]> contAnalysis = new HashMap<>();
+    private static HashMap<Continent, int[]> contAnalysis = new HashMap<>(); //AI uses it to analyze for claim phase
+    private static HashMap<Territory, int[]> terAnalysis = new HashMap<>(); //not used right now, needs improvement (sorting!). this will help to choose attack and reinforce smarter
 
     //Analysis method for AI. Fills a hashmap with number of territories owned per side for each continent
 
@@ -37,6 +33,20 @@ public class EnemyAI {
         }
     }
 
+    private static void terCount(){
+
+        for (Territory ter: Territory.tmap.values()){
+            int owner = ter.getOwner();
+            int army = ter.getArmy();
+            terAnalysis.put(ter,new int[]{owner,army});
+        }
+    }
+
+
+
+
+    //couldn't sort countAnalysis Hashmap (from smallest to largest continent based on bonus.
+    //so there is a lot of repetitive code here in II and IV. fix issue!
     public static void acquisition(){
 
         continentCount();
@@ -53,11 +63,11 @@ public class EnemyAI {
             }
         }
 
-        // strengthen a continent where computer has more armies than player
+        //II. strengthen a continent where computer has more armies than player - start with smaller continents
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null){
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<3){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     continentCount();
@@ -66,7 +76,31 @@ public class EnemyAI {
             }
         }
 
-        //II. avoid player getting too strong in a continent
+        if (methodRun){
+            for (Continent cont : contAnalysis.keySet()){
+                int[] checkPossession = contAnalysis.get(cont);
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<5){
+                    Actions.claim(getEmptyTer(cont),0);
+                    methodRun = false;
+                    continentCount();
+                    break;
+                }
+            }
+        }
+
+        if (methodRun){
+            for (Continent cont : contAnalysis.keySet()){
+                int[] checkPossession = contAnalysis.get(cont);
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<9){
+                    Actions.claim(getEmptyTer(cont),0);
+                    methodRun = false;
+                    continentCount();
+                    break;
+                }
+            }
+        }
+
+        //III. avoid player getting too strong in a continent
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -79,9 +113,7 @@ public class EnemyAI {
             }
         }
 
-        //III. if I. & II. not the case, look for a continent that is empty and claim a territory,
-        //couldn't sort contAnalysis from smallest to largest continent, so i make the same loop 3 times for small and medium continents
-
+        //IV look for a continent that is empty and claim a territory,
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -108,7 +140,6 @@ public class EnemyAI {
 
         }
 
-
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -123,7 +154,6 @@ public class EnemyAI {
         }
 
         //IV. else choose random territory
-
         if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
                 if (ter.getOwner() == -1) {
@@ -136,7 +166,6 @@ public class EnemyAI {
 
     }
 
-
     public static void reinforcing(){
 
         int i = 1;
@@ -146,12 +175,27 @@ public class EnemyAI {
 
         while (i>0){
 
-            for (Territory t : Territory.tmap.values()){
-                if (t.getOwner() == 0){
-                    Actions.reinforce(t,0);
+            //first, reinforce territories with less than 3 armies on them
+            boolean methodRun = true;
+
+            for (Territory ter : Territory.tmap.values()){
+                if (ter.getOwner() == 0 && ter.getArmy()<3){
+                    Actions.reinforce(ter,0);
+                    methodRun = false;
                     break;
                 }
             }
+
+            //else, reinforce random
+            if (methodRun) {
+                for (Territory ter : Territory.tmap.values()) {
+                    if (ter.getOwner() == 0) {
+                        Actions.reinforce(ter, 0);
+                        break;
+                    }
+                }
+            }
+
             i--;
         }
     }

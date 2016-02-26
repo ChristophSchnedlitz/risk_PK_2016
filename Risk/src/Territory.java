@@ -18,7 +18,7 @@ public class Territory {
     public IntegerProperty army = new SimpleIntegerProperty();
     private final ArrayList<Territory> neighbors = new ArrayList<>();
     public final ArrayList<Polygon> patches = new ArrayList<>();
-    public int owner = -1; // -1: no owner, 0: Computer, 1: Player
+    private int owner = -1; // -1: no owner, 0: Computer, 1: Player
 
     //change changeArmy to update a IntegerProety
     //create getArmyDisplay

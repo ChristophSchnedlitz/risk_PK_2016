@@ -11,6 +11,8 @@ public class GameState {
     private static int[] reinforceBonus; //reinforceBonus[0] = computers reinforcements  reinforceBonus[1] =players reinforcements
     private static Territory ter1mov; // stores one of the two territories that can be moved to and from in 1 round (moving is only allowed from 1 ter to 1 other per round)
     private static Territory ter2mov; // stores one of the two territories that can be moved to and from in 1 round
+    private static Territory conquered;
+    private static Territory conquerer;
 
 
     //1. GAME STATE CHECKS
@@ -143,6 +145,30 @@ public class GameState {
     public static Territory getTer2mov(){
         return ter2mov;
     }
+
+
+
+    //Conquered territory exception from move restriction
+    public static void setConquerTer(Territory first,Territory second){
+        conquerer=first;
+        conquered=second;
+    }
+
+    public static void setConquerNull(){
+        conquerer = null;
+        conquered = null;
+    }
+
+    public static Territory getConquerer(){
+        return conquerer;
+    }
+
+    public static Territory getConquered(){
+        return conquered;
+    }
+
+
+
 
 
 

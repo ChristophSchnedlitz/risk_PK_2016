@@ -22,14 +22,23 @@ public class Actions {
 
     //Move troops into own territories | only from 1 territory to another per round (it is possible to send them back in the same round)
     //more relies that both territories are owned by same owner and first has >1 army
+    // an exception from the move rule are territories that were just conquered. One can always send troops back and forth between these territories
     public static void move(Territory first, Territory second){
 
-        if (GameState.getTer1Mov() == null && GameState.getTer2mov() == null) { //
+        if (GameState.getTer1Mov() == null && GameState.getTer2mov() == null && (first != GameState.getConquered() ||first != GameState.getConquerer() )) { //
             GameState.setTerMov(first,second);
             first.changeArmy(-1);
             second.changeArmy(1);
         } else {
-            if ( (first == GameState.getTer1Mov() || first == GameState.getTer2mov()) && (second == GameState.getTer2mov() || second == GameState.getTer1Mov())){
+            if ( ( (first == GameState.getTer1Mov() || first == GameState.getTer2mov() )
+                    && (second == GameState.getTer2mov() || second == GameState.getTer1Mov())
+                 )
+                 ||
+                    ( (first == GameState.getConquered() || first == GameState.getConquerer() )
+                      && ( ( second == GameState.getConquered() ) || (second == GameState.getConquerer()) )
+                    )
+               )
+            {
                 first.changeArmy(-1);
                 second.changeArmy(1);
             } else {
@@ -43,6 +52,8 @@ public class Actions {
     //2nd step: Create sorted (ascending) array for attacker & defender (fillandsortArray)
     //3d step: Compare arrays and return array with losses on each side
     public static void attack(Territory attackerTer, Territory defenderTer){
+
+        GameState.setConquerNull(); //this deletes all previous exceptions of move restriction in game state
 
         int attackerArmy = attackerTer.getArmy();
         int defenderArmy = defenderTer.getArmy();
@@ -60,6 +71,7 @@ public class Actions {
                 defenderTer.changeArmy(-defenderArmy); //conquered country: first set armies to 0
                 defenderTer.changeOwner(); //change owner of conquered country
                 defenderTer.changeArmy(attackerArmyMax - losses[0]); //set surviving armies of attacker on conquered territory
+                GameState.setConquerTer(attackerTer,defenderTer); //free these territories of move restriction
         }   else {
                     defenderTer.changeArmy(-losses[1]); //defender territory loses troops
                     attackerTer.changeArmy(attackerArmyMax - losses[0]); //attackers troops return (minus the losses)
