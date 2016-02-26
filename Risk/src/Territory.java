@@ -114,11 +114,24 @@ public class Territory {
 
     // C DISPLAY
 
-    //shows updateds army number
+    //shows updated army number
     public IntegerProperty getArmyDisplay(){
         return this.army;
     }
 
+
+    //is the territory a territory? Returns null or Territory
+    public static Territory isTerritory(double x, double y) {
+        for (Territory ter : Territory.tmap.values()) {
+            for (Polygon poly : ter.patches) {
+
+                if (poly.contains(x, y)) {
+                    return ter;
+                }
+            }
+        }
+        return null;
+    }
 
     //sets the color of the Territory according to the owner
     public void setColor (){

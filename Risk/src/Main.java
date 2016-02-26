@@ -57,15 +57,21 @@ public class Main extends Application {
             //Lines connecting neighbors
             //second loop through the neighbors, draws the lines from one capital to all neighbouring capitals
             for (Territory neighbors : ter.getNeighbors()) {
+
+                //formula for the distance between two points on a pane =
+                //sqrt(x2-x1)^2 + (y2-y1)^2 (Pythagoras)
+
                 int x = ter.getCapital()[0] - neighbors.getCapital()[0];
                 int y = ter.getCapital()[1] - neighbors.getCapital()[1];
+
                 double distance = Math.sqrt(x * x + y * y);
-                if (distance < 1250 * 0.5) {
+
+                if (distance < 1250 * 0.5) { //for all territories except Alaska and Kamchatka
                     Line l = new Line(ter.getCapital()[0], ter.getCapital()[1],
                             neighbors.getCapital()[0], neighbors.getCapital()[1]);
 
                     lines.getChildren().add(l);
-                } else {
+                } else { //Alaska and Kamchatka would go through the map and not get connected via the borders of the window
                     if (ter.getCapital()[0] < 1250 * 0.5) {
                         Line line1 = new Line(ter.getCapital()[0], ter.getCapital()[1],
                                 0, neighbors.getCapital()[1]);//neighbors.getCapital()[1]/2
@@ -75,7 +81,6 @@ public class Main extends Application {
 
                         lines.getChildren().addAll(line1, line2);
                     }
-
                 }
             }
 
@@ -93,7 +98,6 @@ public class Main extends Application {
             //add capital to label
             capitals.getChildren().add(armyDisplay);
 
-
             //Draw Territories
             ter.setColor();
             //adds all polygons to the countries group
@@ -107,7 +111,7 @@ public class Main extends Application {
 
 
         //Music
-        String musicFile = "C:\\Users\\Christoph\\Documents\\soundtrack.mp3";
+        String musicFile = "C:\\Users\\Christoph\\Documents\\sound.mp3";
 
         Media sound = new Media(new File(musicFile).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
@@ -116,7 +120,7 @@ public class Main extends Application {
 
         world.setOnMouseClicked(e -> {
 
-            Territory current = isTerritory(e.getX(), e.getY());
+            Territory current = Territory.isTerritory(e.getX(), e.getY());
             Territory previous = last;
             last = current;
 
@@ -129,7 +133,7 @@ public class Main extends Application {
                     last = null; // command handled, reset last, wait for new input
                 }
             } else {
-                last = null; // click on non-territory; reset last, wait for new input
+               last = null; // click on non-territory; reset last, wait for new input
             }
 
         });
@@ -144,18 +148,11 @@ public class Main extends Application {
         );
         layout.setTop(gameStateDisplay);
 
-        /*Label reinforceDisplay = new Label("" + GameState.displayBonusPlayer().get());
-        GameState.getGameState().addListener((v, oldValue, newValue) -> {
-                    gameStateDisplay.setText(GameState.displayBonusPlayer().get() + "");
-                }
-        );
-        layout.setBottom(reinforceDisplay);*/
 
         //End round button for player in move/attack stage (stage 3)
         Button button = new Button("End my round");
         button.setAlignment(Pos.CENTER);
         button.setFont(new Font("Calibri", 16));
-
 
         button.setOnMouseClicked(e -> {
 
@@ -176,7 +173,7 @@ public class Main extends Application {
         layout.setCenter(world);
 
         //sets layout background color (water, oceans)
-        layout.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE, new CornerRadii(0), new Insets(0))));
+        layout.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE, new CornerRadii(100), new Insets(0))));
 
         //scene size, title, stage
         Scene scene = new Scene(layout, 1250, 650);
@@ -188,24 +185,11 @@ public class Main extends Application {
         stage.show();
     }
 
-    //is the territory a territory? Returns null or Territory
-    private Territory isTerritory(double x, double y) {
-        for (Territory ter : Territory.tmap.values()) {
-            for (Polygon poly : ter.patches) {
-
-                if (poly.contains(x, y)) {
-                    return ter;
-                }
-            }
-        }
-        return null;
-    }
-
 
     public static void main(String args[]) {
         launch(args);
-
     }
+
 
     // returns true if input was fully handled, false if need to wait for another user input
     // current is always a territory
@@ -252,34 +236,32 @@ public class Main extends Application {
                     Actions.attack(previous, current);
                 }
                 checkGameOver(world);
-                return true; // handles valid and other invalid cases by forcing user to start selecting countries
+                return true; // handles valid and other invalid cases by forcing user to start selecting territories
             }
         }
 
         return false; // invalid action, but lets continue
     }
 
-    //for game over message
+    //DISPLAY for game over message
     static void checkGameOver(Group world) {
         // GAME OVER
         if (GameState.getGameState().get() == 4) {
-            String won="";
+            String end;
             if (GameState.territoryCount()[0]==42){
-                won = "Game Over! You lost!";
+                end = "Game Over! You lost!";
             }
             else {
-                won="Game Over! You won!";
+                end="Game Over! You won!";
             }
 
-
-            Button gameOver = new Button(won);
+            Button gameOver = new Button(end);
             gameOver.setPrefSize(300, 150);
             gameOver.setAlignment(Pos.CENTER);
             gameOver.setTranslateX(470);
             gameOver.setTranslateY(200);
             gameOver.setFont(new Font("Calibri", 15));
             gameOver.setStyle("-fx-font: 22 arial; -fx-base: #b6e7c9;");
-            //gameOver.setPadding(new Insets(20));
             world.getChildren().add(gameOver);
 
         }

@@ -27,21 +27,19 @@ public class ReadFile {
         try {
             in = new BufferedReader(new FileReader(filePath));
 
-
             String line; //1 line is one entity to be treated: territory patch, capital, contintent list, or neigbor list
-
 
             while ((line = in.readLine()) != null) {
                 assignLine(line); //each line is treated differently according to its assignment
             }
         } catch (IOException ex) {
             ex.printStackTrace(); //prints stack trace of the exception to system.err
-        } finally {
+        } finally { //to close the reader
             if (in != null)
                 try {
                     in.close();
                 } catch (IOException e) {
-                    System.out.println("Import partially failed!");
+                    System.out.println("Something went wrong");
                 }
         }
     }

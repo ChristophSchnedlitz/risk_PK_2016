@@ -154,7 +154,7 @@ public class EnemyAI {
         }
 
         //IV. else choose random territory
-
+        //but preferably not from Asia
         if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
                 if (ter.getOwner() == -1 && !Continent.getContinentName(ter).equals("Asia")) {
