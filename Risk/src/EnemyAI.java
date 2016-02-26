@@ -67,7 +67,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus==2){
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus < 3){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
@@ -79,7 +79,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<=5){
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus < 5){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
@@ -91,7 +91,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<9){
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus < 7){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
@@ -130,7 +130,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 4) ){
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 5) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
@@ -143,7 +143,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 6) ){
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 7) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
