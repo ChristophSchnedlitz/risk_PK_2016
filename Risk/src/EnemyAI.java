@@ -52,7 +52,7 @@ public class EnemyAI {
             }
         }
 
-        //III. if !I & !II, strengthen a continent where computer has more armies than player
+        // strengthen a continent where computer has more armies than player
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -64,19 +64,18 @@ public class EnemyAI {
             }
         }
 
-
-
         //II. avoid player getting too strong in a continent
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0]*3 <= checkPossession[1] && getEmptyTer(cont)!=null){
+                if( (checkPossession[0]*3) <= checkPossession[1] && getEmptyTer(cont)!=null){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     break;
                 }
             }
         }
+
 
 
         //III. if I. & II. not the case, look for a continent that is empty and claim a territory,
@@ -85,7 +84,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0]==0 && checkPossession[1]==0 && cont.armyBonus<=3){
+                if(checkPossession[0]==0 && checkPossession[1]==0 && (cont.armyBonus < 6 && getEmptyTer(cont)!=null)){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     break;
@@ -93,11 +92,12 @@ public class EnemyAI {
             }
 
         }
+
 
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0]==0 && checkPossession[1]==0 && cont.armyBonus <= 5){
+                if(checkPossession[0]==0 && checkPossession[1]==0 && (cont.armyBonus < 4 && getEmptyTer(cont)!=null)){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     break;
@@ -105,6 +105,20 @@ public class EnemyAI {
             }
 
         }
+
+
+        if (methodRun){
+            for (Continent cont : contAnalysis.keySet()){
+                int[] checkPossession = contAnalysis.get(cont);
+                if(checkPossession[0]==0 && checkPossession[1]==0 && (cont.armyBonus < 3 && getEmptyTer(cont)!=null) ){
+                    Actions.claim(getEmptyTer(cont),0);
+                    methodRun = false;
+                    break;
+                }
+            }
+
+        }
+
 
         //IV. else choose random territory
 
@@ -179,7 +193,7 @@ public class EnemyAI {
     private static Territory getEmptyTer(Continent cont){
 
         for (Territory ter : cont.territories){
-            if (ter.getOwner()==-1){
+            if (ter.getOwner()== -1){
                 return ter;
             }
         }

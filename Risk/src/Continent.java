@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class Continent {
 
     public static HashMap<String, Continent> cmap = new HashMap<>();
-    public int armyBonus;
+    public int armyBonus =0;
     public ArrayList<Territory> territories = new ArrayList<>();
 
 

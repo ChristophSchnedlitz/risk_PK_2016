@@ -116,6 +116,7 @@ public class ReadFile {
 
     // if line is a continent information
     private void addContinent(String s) {
+
         String[] allInfo = s.split(" : ", 2);
         String[] continentVar = allInfo[0].split(" ");
         String[] territories = allInfo[1].split(" - ");
@@ -126,11 +127,12 @@ public class ReadFile {
 
         for (String i : continentVar) {
             if (i.matches("^[^\\d].*")) {
-                nameOfContinent = nameOfContinent + " " + i; //continent names can have multiple words
+                nameOfContinent = nameOfContinent +" "+i; //continent names can have multiple words
             } else {
                 armyBonus = Integer.parseInt(i); //if it is a digit, then it is the army bonus of the continent
             }
         }
+        nameOfContinent = nameOfContinent.substring(1); //remove first " " from Continent name
 
         for (String ter : territories) {
             territoryList.add(Territory.tmap.get(ter));
