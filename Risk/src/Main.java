@@ -222,12 +222,6 @@ public class Main extends Application {
         if (GameState.getGameState().get() == 1 && current.getOwner() == -1 && !isRight) {
             Actions.claim(current, 1);
             EnemyAI.acquisition();
-
-            for (Continent cont : EnemyAI.contAnalysis.keySet()){
-                System.out.println(EnemyAI.contAnalysis.get(cont)[0]+"/"+EnemyAI.contAnalysis.get(cont)[1]);
-            }
-
-            System.out.println("Next round:");
             GameState.getGameState();
             return true; // fully handled
         }

@@ -53,8 +53,6 @@ public class EnemyAI {
             }
         }
 
-
-
         // strengthen a continent where computer has more armies than player
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
@@ -72,7 +70,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]*3) <= checkPossession[1] && getEmptyTer(cont)!=null){
+                if( (checkPossession[0]*2) < checkPossession[1] && getEmptyTer(cont)!=null){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     continentCount();
@@ -80,7 +78,6 @@ public class EnemyAI {
                 }
             }
         }
-
 
         //III. if I. & II. not the case, look for a continent that is empty and claim a territory,
         //couldn't sort contAnalysis from smallest to largest continent, so i make the same loop 3 times for small and medium continents
@@ -88,7 +85,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus > 5) ){
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 3) ){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     continentCount();
@@ -98,6 +95,32 @@ public class EnemyAI {
 
         }
 
+        if (methodRun){
+            for (Continent cont : contAnalysis.keySet()){
+                int[] checkPossession = contAnalysis.get(cont);
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 4) ){
+                    Actions.claim(getEmptyTer(cont),0);
+                    methodRun = false;
+                    continentCount();
+                    break;
+                }
+            }
+
+        }
+
+
+        if (methodRun){
+            for (Continent cont : contAnalysis.keySet()){
+                int[] checkPossession = contAnalysis.get(cont);
+                if( (checkPossession[0]==0 && checkPossession[1]==0) && (cont.armyBonus < 6) ){
+                    Actions.claim(getEmptyTer(cont),0);
+                    methodRun = false;
+                    continentCount();
+                    break;
+                }
+            }
+
+        }
 
         //IV. else choose random territory
 
