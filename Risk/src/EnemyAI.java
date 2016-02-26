@@ -88,7 +88,7 @@ public class EnemyAI {
             }
         }
 
-        /*if (methodRun){
+        if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
                 if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<9){
@@ -98,7 +98,7 @@ public class EnemyAI {
                     break;
                 }
             }
-        }*/
+        }
 
         //III. avoid player getting too strong in a continent
         if (methodRun){
@@ -139,7 +139,6 @@ public class EnemyAI {
             }
 
         }
-
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -153,10 +152,17 @@ public class EnemyAI {
 
         }
 
+
+
+
+
+
+
+
         //IV. else choose random territory
         //but preferably not from Asia
         ///purpose of this method is to look first for something that is NOT in asia. But it seems to do the opposite
-        /*if (methodRun) {
+        if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
                 if (ter.getOwner() == -1 && Continent.getContinentName(ter).equals("Asia")) {
                     Actions.claim(ter, 0);
@@ -165,7 +171,7 @@ public class EnemyAI {
                     break;
                 }
             }
-        }*/
+        }
 
         if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
