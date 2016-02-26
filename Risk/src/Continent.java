@@ -8,10 +8,12 @@ public class Continent {
 
     public static HashMap<String, Continent> cmap = new HashMap<>();
     public int armyBonus =0;
+    public String nameOfContinent;
     public ArrayList<Territory> territories = new ArrayList<>();
 
 
-    public Continent(int armyBonus,ArrayList<Territory> territories){
+    public Continent(String nameOfContinent, int armyBonus,ArrayList<Territory> territories){
+        this.nameOfContinent = nameOfContinent;
         this.armyBonus = armyBonus;
         this.territories = territories;
     }
@@ -36,6 +38,18 @@ public class Continent {
         }
 
         return continentOwnerBonus;
+    }
+
+    //return name of Continent
+    public static String getContinentName(Territory ter){
+
+        for (Continent cont : Continent.cmap.values()){
+            if (cont.territories.contains(ter)){
+                return cont.nameOfContinent;
+            }
+
+        }
+        return null;
     }
 
 

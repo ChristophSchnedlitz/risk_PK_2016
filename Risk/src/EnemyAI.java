@@ -79,7 +79,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<5){
+                if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<=5){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     continentCount();
@@ -88,7 +88,7 @@ public class EnemyAI {
             }
         }
 
-        if (methodRun){
+        /*if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
                 if(checkPossession[0] > checkPossession[1] && getEmptyTer(cont)!=null && cont.armyBonus<9){
@@ -98,13 +98,13 @@ public class EnemyAI {
                     break;
                 }
             }
-        }
+        }*/
 
         //III. avoid player getting too strong in a continent
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]*2) < checkPossession[1] && getEmptyTer(cont)!=null){
+                if( (checkPossession[0]*2) <= checkPossession[1] && getEmptyTer(cont)!=null){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     continentCount();
@@ -154,6 +154,18 @@ public class EnemyAI {
         }
 
         //IV. else choose random territory
+
+        if (methodRun) {
+            for (Territory ter : Territory.tmap.values()) {
+                if (ter.getOwner() == -1 && !Continent.getContinentName(ter).equals("Asia")) {
+                    Actions.claim(ter, 0);
+                    methodRun = false;
+                    continentCount();
+                    break;
+                }
+            }
+        }
+
         if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
                 if (ter.getOwner() == -1) {

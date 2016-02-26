@@ -139,7 +139,7 @@ public class ReadFile {
         }
 
         if (Continent.cmap == null || !Continent.cmap.containsKey(nameOfContinent)) {
-            continent = new Continent(armyBonus,territoryList);
+            continent = new Continent(nameOfContinent,armyBonus,territoryList);
             Continent.cmap.put(nameOfContinent, continent);
         }
 
