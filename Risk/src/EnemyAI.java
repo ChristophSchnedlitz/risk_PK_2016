@@ -63,7 +63,7 @@ public class EnemyAI {
             }
         }
 
-        //II. strengthen a continent where computer has more armies than player - start with smaller continents
+        //II.1 strengthen a continent where computer has more armies than player - start with smaller continents
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -76,6 +76,7 @@ public class EnemyAI {
             }
         }
 
+        //II.2
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -88,6 +89,7 @@ public class EnemyAI {
             }
         }
 
+        //II.3
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
@@ -104,7 +106,7 @@ public class EnemyAI {
         if (methodRun){
             for (Continent cont : contAnalysis.keySet()){
                 int[] checkPossession = contAnalysis.get(cont);
-                if( (checkPossession[0]*2) <= checkPossession[1] && getEmptyTer(cont)!=null){
+                if( (checkPossession[0]*3) < checkPossession[1] && getEmptyTer(cont)!=null){
                     Actions.claim(getEmptyTer(cont),0);
                     methodRun = false;
                     //continentCount();
@@ -153,12 +155,10 @@ public class EnemyAI {
 
         }
 
-
-
         //IV. else choose random territory
         //but preferably not from Asia
         ///purpose of this method is to look first for something that is NOT in asia. But it seems to do the opposite
-        /*if (methodRun) {
+        if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
                 if (ter.getOwner() == -1 && Continent.getContinentName(ter).equals("Asia")) {
                     Actions.claim(ter, 0);
@@ -167,7 +167,7 @@ public class EnemyAI {
                     break;
                 }
             }
-        }*/
+        }
 
         if (methodRun) {
             for (Territory ter : Territory.tmap.values()) {
@@ -261,11 +261,6 @@ public class EnemyAI {
         }
         return null;
     }
-
-
-    //look through continent territories and return which has my strongest army and has enemy neighbor
-    //loop through continent territories and return one by player that is neighbor of you
-    //compare armies of two territories
 
 
 }
